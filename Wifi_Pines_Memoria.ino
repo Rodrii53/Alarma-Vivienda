@@ -1,18 +1,20 @@
 void WifiPinesMemoria()
 {
   //read configuration from FS json
-  Serial.println("mounting FS...");
+  Serial.println("Montando FS...");
 
   if (SPIFFS.begin()) {
-    Serial.println("mounted file system");
+    Serial.println("Sistema Montado FS");
     if (SPIFFS.exists("/config.json")) {
-      //file exists, reading and loading
+      
+      //Si existe archivo, Lee y carga
       Serial.println("reading config file");
       File configFile = SPIFFS.open("/config.json", "r");
       if (configFile) {
         Serial.println("opened config file");
         size_t size = configFile.size();
-        // Allocate a buffer to store contents of the file.
+        
+        // Buffer para preparar el archivo.
         std::unique_ptr<char[]> buf(new char[size]);
 
         configFile.readBytes(buf.get(), size);
@@ -39,7 +41,7 @@ WiFiManager wifiManager;
 WiFiManagerParameter custom_auth ("Blynk Token Recibido", "Blynk Token", auth, 35,"title= \"Token: \"");
 wifiManager.addParameter(&custom_auth);
 
-//set config save notify callback
+//Guardar callback
   wifiManager.setSaveConfigCallback(saveConfigCallback);
 
 // REINICIA CONFIGURACIONES GUARDADAS DE WIFI MANAGER
@@ -51,29 +53,25 @@ wifiManager.addParameter(&custom_auth);
 //wifiManager.autoConnect("Alarma", ""); // Nombre y Contraseña de Wifi LAN
 
   if (!wifiManager.autoConnect("Alarma", "")) {
-    Serial.println("failed to connect and hit timeout");
+    Serial.println("Fallo al conectar, Timeout");
     /*DELAY*/time_now = millis(); while(millis() < time_now+period1500){/*wait approx. [period]ms*/}/*DELAY*/
-    //reset and try again, or maybe put it to deep sleep
     ESP.restart();
     /*DELAY*/time_now = millis(); while(millis() < time_now+period1500){/*wait approx. [period]ms*/}/*DELAY*/
   }
-  
-  //if you get here you have connected to the WiFi
-  Serial.println("connected...yeey :)");
-  
-  //read updated parameters
+    
+  //Lee actualiza datos
   strcpy(auth, custom_auth.getValue());
 
-  //save the custom parameters to FS
+  //Guarda parametros FS
   if (shouldSaveConfig) {
-    Serial.println("saving config");
+    Serial.println("Guardado");
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
     json["auth"] = auth;
 
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
-      Serial.println("failed to open config file for writing");
+      Serial.println("fallo al abrir config");
     }
 
     json.printTo(Serial);
@@ -82,35 +80,11 @@ wifiManager.addParameter(&custom_auth);
     //end save
   }
 
-
-
-/*
-// SE ENCARGA DE GUARDAR TOKEN POR PRIMERA VEZ
-if (fauth == 1){
-strcpy(auth, custom_auth.getValue());
-fauth=0;
-EEPROM.put(mfauth, fauth);
-EEPROM.commit();
-File datos = SPIFFS.open("/datos.txt", "w"); if (!datos) { Serial.println("Fallo escritura de archivo"); }
-for (int i=1; i<=1; i++){
-// Escribe el archivo
-datos.println(auth);
-} datos.close();
-}
-
-// LEE LOS DATOS YA GUARDADOS DE TOKEN
-File datos = SPIFFS.open("/datos.txt", "r"); if (!datos) { Serial.println("Fallo apertura de archivo"); }
-for (int i=1; i<=1; i++){
-  String str=datos.readStringUntil('\n');
-  str.toCharArray(auth, 35);
-} datos.close();
-SON DE TOKEN VIEJO*/
 // En reemplazo a Blynk.begin(auth, ssid, pass, host, port); // (Si se quiere usar un servidor propio quedaria: Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);)
-// line below is blocking code, consider regular WiFi connection with timeout if you have router problems
-   Blynk.connectWiFi(ssid, pass); // used with Blynk.connect() in place of Blynk.begin(auth, ssid, pass, server, port);
+   Blynk.connectWiFi(ssid, pass);
 
-  // line below needs to be BEFORE Blynk.connect()
-    timer.setInterval(11000L, CheckConnection); // check if still connected every 11s  
+  // Utilizado para conectar, tiene que estar antes de Blynk.connect()
+    timer.setInterval(11000L, CheckConnection); // check
   
     Blynk.config(auth, host, port);
     Blynk.connect();
