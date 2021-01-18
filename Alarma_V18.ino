@@ -1,28 +1,27 @@
 /*
   SIMBOLOGIA EN ORDEN:
-  .Pin 16   =   SIRENA CONEXION (RESISTENCIA PULL-DOWN)
+  Pin 16   =   SIRENA CONEXION (RESISTENCIA PULL-DOWN)
   Pin 5     =   Rele N°1
   Pin 4     =   Rele N°2
-  .Pin 0    =   Rele N°3 (NO USAR DE ENTRADA)
-  .Pin 2    =   Led Integrado (Esta invertido) (NO A GND AL ARRANCAR)
+  Pin 0    =   Rele N°3 (NO USAR DE ENTRADA)
+  Pin 2    =   Led Integrado (Esta invertido) (NO A GND AL ARRANCAR)
   Pin de voltaje (3,3v)
   Pin de tierra o GND (0v)
   Pin 14    =   Rele N°4
   Pin 12    =   Rele N°5
   Pin 13    =   Entrada de voltaje, input boton de Reset
-  .Pin 15   =   Receptor 403Mhz (NO PULL-UP)
-  .Pin 3    =   LIBRE (NO USABLE CON UART)
-  .Pin 1    =   LIBRE (NO USABLE CON UART)
+  Pin 15   =   Receptor 403Mhz (NO PULL-UP)
+  Pin 3    =   LIBRE (NO USABLE CON UART)
+  Pin 1    =   LIBRE (NO USABLE CON UART)
   Pin de tierra o GND (0v)
   Pin de voltaje (3,3v)
   Pin 17    =   Reservado para Microfono (ADC0)
-  Pin 6a11  =   No son usables, estan reservados
+  Pin 6  =   No son usables, estan reservados
 */
-// SIEMPRE tiene que haber un comando abajo del Tp. Tambien funcionaria "Serial.print("");" o delay(0);
 
 //#define BLYNK_DEBUG PARA VER SI ESTA CONECTADO CONSTANTEMENTE https://community.blynk.cc/t/solved-how-to-run-blynk-run-only-when-wifi-connection-is-established/6492/13
-#define BLYNK_TIMEOUT_MS  750  // must be BEFORE BlynkSimpleEsp8266.h doesn't work !!!
-#define BLYNK_HEARTBEAT   17   // must be BEFORE BlynkSimpleEsp8266.h works OK as 17s    
+#define BLYNK_TIMEOUT_MS  750  // Tiene que estar antes de la libreria BlynkSimpleEsp   
+#define BLYNK_HEARTBEAT   17   // Tiene que estar antes de la libreria BlynkSimpleEsp   
 
 //.....................................//DEFINES E INCLUDES//.....................................//
   #include "SPIFFS.h" // Se extrae en Documentos/Arduino/tools https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/
@@ -89,11 +88,11 @@ void saveConfigCallback () {
 
 void CheckConnection(){    // check every 11s if connected to Blynk server
   if(!Blynk.connected()){
-    Serial.println("Not connected to Blynk server"); 
+    Serial.println("Conectado al Blynk server"); 
     Blynk.connect();  // try to connect to server with default timeout
   }
   else{
-    Serial.println("Connected to Blynk server");     
+    Serial.println("Conectado al Blynk server");     
   }
 }
 //.....................................//TECLADO Y TEMPERATURA INTERNA//.....................................//
